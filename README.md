@@ -1,7 +1,7 @@
 # OBJ Reader/Writer
 
 Я написал собственный модуль [ObjWriter.java](src/com/cgvsu/objwriter/ObjWriter.java), предназначенный для сохранения модели в формат Obj.
-Подготовил [юнит-тесты](tests/com/cgvsu/objwriter/ObjWriterTest.java) для проверки моего модуля.
+Подготовил [юнит-тесты](src/tests/com/cgvsu/objwriter/ObjWriterTest.java) для проверки моего модуля.
 Проект реализует полный цикл работы с 3D моделями: загрузку, обработку и сохранение.
 
 ## Возможности
