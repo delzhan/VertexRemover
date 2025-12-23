@@ -1,0 +1,4 @@
+com\cgvsu\objreader\ObjReaderTest.class
+com\cgvsu\vertexremover\VertexRemoverTest.class
+com\cgvsu\vertexremover\VertexRemoverEdgeCasesTest.class
+com\cgvsu\objwriter\ObjWriterTest.class

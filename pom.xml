@@ -5,56 +5,30 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.cgvsu</groupId>
     <artifactId>ObjTools</artifactId>
     <version>1.0</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Для JDK 25 указываем 17+ (поддерживает switch rules) -->
+        <maven.compiler.release>21</maven.compiler.release>
+        <!-- Оставляем Windows-1251, но нужно почистить файлы -->
+        <project.build.sourceEncoding>windows-1251</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>windows-1251</project.reporting.outputEncoding>
+        <file.encoding>windows-1251</file.encoding>
     </properties>
 
     <dependencies>
-        <!-- Основная зависимость JUnit 5 (включает api, engine, params) -->
+        <!-- ТОЛЬКО одна зависимость JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Явно добавляем JUnit Jupiter API (содержит Test, TempDir и др.) -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.9.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Параметризованные тесты -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>5.9.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Движок для запуска тестов -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.9.2</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <!-- Указываем нестандартные пути для вашей структуры -->
-        <sourceDirectory>com.cgvsu</sourceDirectory>
-        <testSourceDirectory>tests.com.cgvsu</testSourceDirectory>
-
         <resources>
             <resource>
                 <directory>data</directory>
@@ -66,13 +40,14 @@
         </resources>
 
         <plugins>
+            <!-- Компилятор с release вместо source/target -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <release>${maven.compiler.release}</release>
+                    <encoding>windows-1251</encoding>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
@@ -84,32 +59,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M9</version>
                 <configuration>
-                    <!-- Включаем все тесты JUnit 5 -->
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                        <include>**/Test*.java</include>
-                        <include>**/*TestCase.java</include>
-                    </includes>
-                    <!-- Используем JUnit Platform -->
-                    <useModulePath>false</useModulePath>
+                    <argLine>-Dfile.encoding=windows-1251</argLine>
                 </configuration>
-            </plugin>
-
-            <!-- Плагин для загрузки исходников зависимостей -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>sources</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

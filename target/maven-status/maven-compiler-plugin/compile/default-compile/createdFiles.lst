@@ -1,0 +1,12 @@
+com\cgvsu\math\Vector3f.class
+com\cgvsu\model\VertexRemover.class
+com\cgvsu\objwriter\ObjWriterException.class
+com\cgvsu\objreader\ObjReaderException.class
+com\cgvsu\model\Model.class
+com\cgvsu\objreader\ObjReader.class
+com\cgvsu\objwriter\ObjWriter.class
+com\cgvsu\util\FileCompareImpl.class
+com\cgvsu\util\FileCompareObj.class
+com\cgvsu\model\Polygon.class
+com\cgvsu\Main.class
+com\cgvsu\math\Vector2f.class
