@@ -10,16 +10,13 @@
     <version>1.0</version>
 
     <properties>
-        <!-- Для JDK 25 указываем 17+ (поддерживает switch rules) -->
         <maven.compiler.release>21</maven.compiler.release>
-        <!-- Оставляем Windows-1251, но нужно почистить файлы -->
         <project.build.sourceEncoding>windows-1251</project.build.sourceEncoding>
         <project.reporting.outputEncoding>windows-1251</project.reporting.outputEncoding>
         <file.encoding>windows-1251</file.encoding>
     </properties>
 
     <dependencies>
-        <!-- ТОЛЬКО одна зависимость JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -40,7 +37,6 @@
         </resources>
 
         <plugins>
-            <!-- Компилятор с release вместо source/target -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
