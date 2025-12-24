@@ -1,105 +1,59 @@
-# OBJ Reader/Writer
+# Vertex Removal Tool for 3D Models
 
-Я написал собственный модуль [ObjWriter.java](src/com/cgvsu/objwriter/ObjWriter.java), предназначенный для сохранения модели в формат Obj.
-Подготовил [юнит-тесты](src/tests/com/cgvsu/objwriter/ObjWriterTest.java) для проверки моего модуля.
-Проект реализует полный цикл работы с 3D моделями: загрузку, обработку и сохранение.
+Я разработала модуль для удаления вершин из полигональных 3D-моделей с автоматическим удалением связанных полигонов.
+Программа реализует полный цикл работы с 3D-моделями: загрузку, модификацию и сохранение, гарантируя корректность модели после удаления вершин.
+Также в коде используется заимствованный модуль [ObjWriter.java](src/com/cgvsu/objwriter/ObjWriter.java), предназначенный для сохранения модели в формат Obj.
 
 ## Возможности
+
+- **Удаление вершин** - выборочное удаление вершин по индексам
+- **Автоматическое удаление полигонов** - все полигоны, содержащие удаляемые вершины, удаляются автоматически
+- **Перерасчёт нормалей** - нормали пересчитываются после модификации модели
+- **Переиндексация данных** - автоматическая коррекция индексов вершин и нормалей в полигонах
+- **Поддержка формата OBJ** - полная совместимость с существующим парсером и writer'ом
+
+Также сохранены все возможности модуля [ObjWriter.java](src/com/cgvsu/objwriter/ObjWriter.java), а именно:
+
+Валидация модели — гарантия целостности модели после модификации
 
 - **Чтение OBJ файлов** - полная поддержка формата .obj
 - **Запись OBJ файлов** - сохранение моделей в стандартном формате
 - **Валидация данных** - проверка корректности моделей
 - **Сравнение файлов** - утилита для проверки идентичности моделей
 - **Поддержка всех компонентов**:
-    - Вершины (v)
-    - Текстурные координаты (vt)
-    - Нормали (vn)
-    - Полигоны/грани (f)
+  - Вершины (v)
+  - Текстурные координаты (vt)
+  - Нормали (vn)
+  - Полигоны/грани (f)
 
-## Основные модули
+## Основной модуль
 
-- ### ObjWriter
+- ### VertexRemover
   - ```java
-    public class ObjWriter {
-        public static void write(Model model, String filePath)
-        public static String modelToString(Model model)
-        public static String modelToString(Model model, String comment)
+    public class VertexRemover {
+    public static void removeVertices(Model model, List<Integer> vertexIndicesToDelete)
+    public static void recalculateNormals(Model model)
+    private static void reindexPolygons(Model model, List<Integer> deletedObjIndices)
     }
     ``` 
   - Методы:
-    - **write(Model, String)** - сохраняет модель в файл
-    - **modelToString(Model)** - возвращает строковое представление модели
-    - **modelToString(Model, String)** - с пользовательским комментарием
+    - **removeVertices(Model, List<Integer>)** - удаляет указанные вершины и все полигоны, которые их содержат
+    - **recalculateNormals(Model)** - пересчитывает нормали модели
+    - **reindexPolygons(Model, List<Integer>)** - переиндексирует полигоны после удаления вершин
 
-- ### FileCompareObj
-  - ```java
-    public class FileCompareObj implements FileCompareImpl {
-        public void compareFiles()
-        public void printDifferenceSummary()
-        public boolean areFilesIdentical()
-        public void compareFilesContent()
-    }
-    ``` 
-  - Методы:
-      - **compareFiles()** - сравнивает два OBJ файла и выводит статистику по элементам
-      - **printDifferenceSummary()** - показывает сводку различий между файлами
-      - **areFilesIdentical()** - проверяет, идентичны ли файлы побайтово
-      - **compareFilesContent()** - выполняет детальное сравнение содержимого файлов
+## Алгоритм работы
 
-
-## Пример работы
-```Java
-// Загрузка модели
-Model model = ObjReader.read(Files.readString(Path.of("model.obj")));
-
-// Просмотр статистики
-System.out.println("Vertices: " + model.vertices.size());
-System.out.println("Textures: " + model.textureVertices.size());
-System.out.println("Polygons: " + model.polygons.size());
-
-// Сохранение модели
-ObjWriter.write(model, "model_output.obj");
-
-// Проверка идентичности
-FileCompareObj comparator = new FileCompareObj(
-    Path.of("model.obj"), 
-    Path.of("model_output.obj")
-);
-comparator.compareFiles();
-```
-
-## Формат поддерживаемых данных
-- Вершины
-```text
-v x y z
-v 1.0 0.0 0.0
-```
-- Текстурные координаты
-```text
-vt u v
-vt 0.5 0.5
-```
-- Нормали
-```text
-vn x y z
-vn 0.0 1.0 0.0
-```
-- Полигоны
-```text
-f v1 v2 v3                          # Только вершины
-f v1/vt1 v2/vt2 v3/vt3              # Вершины + текстуры
-f v1//vn1 v2//vn2 v3//vn3           # Вершины + нормали
-f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3  # Все компоненты
-```
+- **Поиск зависимых полигонов** - для каждой удаляемой вершины находятся все полигоны, которые её содержат
+- **Удаление полигонов** - все найденные полигоны удаляются из модели
+- **Удаление вершин** - выбранные вершины удаляются из списка
+- **Переиндексация** - индексы в оставшихся полигонах корректируются с учётом удалённых вершин
+- **Перерасчёт нормалей** - нормали пересчитываются по формуле векторного произведения
 
 ## Тестирование
-Проект включает комплексные модульные тесты, проверяющие:
-- Корректность форматирования чисел
-- Обработку различных комбинаций данных (только вершины, с текстурами, с нормалями)
-- Обработку ошибок (null модели, NaN значения)
-- Корректность индексации (0-based → 1-based)
-- Сохранение структуры данных
 
-## Обработка ошибок
-- [ObjReaderException.java](src/com/cgvsu/objreader/ObjReaderException.java) - ошибки чтения
-- [ObjWriterException.java](src/com/cgvsu/objwriter/ObjWriterException.java) - ошибки записи
+Проект включает комплексные модульные тесты, проверяющие:
+- Базовую функциональность — удаление одиночных и множественных вершин
+- Крайние случаи — обработка null, пустых списков, несуществующих индексов
+- Переиндексацию — корректность обновления индексов в полигонах
+- Дубликаты — игнорирование повторяющихся индексов
+- Целостность модели — валидность индексов после модификации
